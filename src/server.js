@@ -69,5 +69,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
 
 app.get('*', (req, res) => {
-  res.status(404).send('Cannot find page');
+  res.status(404).render('cannotFindPage');
 });
