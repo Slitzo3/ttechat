@@ -1,24 +1,28 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
+const passport = require('passport');
+const User = require('../models/User');
+const { forwardAuthenticated } = require('../config/auth');
 
-router.get('/', (req, res) => {
+router.get('/', forwardAuthenticated, (req, res) => {
   res.render('getstarted');
 });
 
-router.get('/register', (req, res) => {
+router.get('/register', forwardAuthenticated, (req, res) => {
   res.render('register');
 });
 
-router.get('/login', (req, res) => {
+router.get('/login', forwardAuthenticated, (req, res) => {
   res.render('login');
 });
 
 // Register
-router.post('/register', (req, res) => {
-  const { name, email, password, password2 } = req.body;
+router.post('/register', forwardAuthenticated, (req, res) => {
+  const { username, email, password, password2 } = req.body;
   let errors = [];
 
-  if (!name || !email || !password || !password2) {
+  if (!username || !email || !password || !password2) {
     errors.push({ msg: 'Please enter all fields' });
   }
 
@@ -33,7 +37,7 @@ router.post('/register', (req, res) => {
   if (errors.length > 0) {
     res.render('register', {
       errors,
-      name,
+      username,
       email,
       password,
       password2,
@@ -44,14 +48,14 @@ router.post('/register', (req, res) => {
         errors.push({ msg: 'Email already exists' });
         res.render('register', {
           errors,
-          name,
+          username,
           email,
           password,
           password2,
         });
       } else {
         const newUser = new User({
-          name,
+          username,
           email,
           password,
         });
@@ -75,16 +79,16 @@ router.post('/register', (req, res) => {
 });
 
 // Login
-router.post('/login', (req, res, next) => {
+router.post('/login', forwardAuthenticated, (req, res, next) => {
   passport.authenticate('local', {
-    successRedirect: '/dashboard',
+    successRedirect: '/lobby',
     failureRedirect: '/login',
     failureFlash: true,
   })(req, res, next);
 });
 
 // Logout
-router.get('/logout', (req, res) => {
+router.get('/logout', forwardAuthenticated, (req, res) => {
   req.logout();
   req.flash('success_msg', 'You are logged out');
   res.redirect('/login');
