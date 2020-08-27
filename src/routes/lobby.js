@@ -6,7 +6,7 @@ const User = require('../models/User');
 const { forwardAuthenticated, ensureAuthenticated } = require('../config/auth');
 
 router.get('/', ensureAuthenticated, (req, res) => {
-  res.render('./lobby/lobby');
+  res.render('./lobby/lobby', { users: req.user });
 });
 
 module.exports = router;

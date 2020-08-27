@@ -43,8 +43,8 @@
             <a class="nav-link" href="#">About</a>
           </li>
         </ul>
-        <% if(typeof users !== 'undefined') { %>
-        <form action="/users/logout">
+        <% if(typeof users != 'undefined') { %>
+        <form action="/logout">
           <div class="text-right">
             <input type="submit" value="Logout" class="btn-danger logout" id="logout" />
           </div>
