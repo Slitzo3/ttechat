@@ -56,7 +56,8 @@ app.use(function (req, res, next) {
 });
 
 //Routes
-app.use('/', require('./routes/index'));
+app.use('/', require('./routes/index.js'));
+app.use('/lobby', require('./routes/lobby.js'));
 
 //On error [MongoDB]
 db.on('error', (error) => console.log(error));
