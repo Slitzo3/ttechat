@@ -1,7 +1,7 @@
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
+  require('dotenv').config();
 }
-
+const express = require('express');
 const app = require('express')();
 const expressLayouts = require('express-ejs-layouts');
 const mongoose = require('mongoose');
@@ -14,9 +14,9 @@ const methodOverride = require('method-override');
 require('./config/passport')(passport);
 
 mongoose.connect(process.env.MONGODB_NAV, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useCreateIndex: true,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  useCreateIndex: true,
 });
 
 const db = mongoose.connection;
@@ -48,7 +48,7 @@ app.use(passport.session());
 app.use(flash());
 
 //Routes
-
+app.use('/', require('./routes/index'));
 
 //On error [MongoDB]
 db.on('error', (error) => console.log(error));
@@ -60,5 +60,5 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, console.log(`Server started on port ${PORT}`));
 
 app.get('*', (req, res) => {
-    res.status(404).send('Cannot find page');
+  res.status(404).send('Cannot find page');
 });
