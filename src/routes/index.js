@@ -44,6 +44,16 @@ router.post('/register', forwardAuthenticated, (req, res) => {
     });
   } else {
     User.findOne({ email: email }).then((user) => {
+      if (user.username === username) {
+        errors.push({ msg: 'Username already exists' });
+        res.render('register', {
+          errors,
+          username,
+          email,
+          password,
+          password2,
+        });
+      }
       if (user) {
         errors.push({ msg: 'Email already exists' });
         res.render('register', {
