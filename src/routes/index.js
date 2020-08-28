@@ -9,6 +9,10 @@ router.get('/', forwardAuthenticated, (req, res) => {
   res.render('getstarted');
 });
 
+router.get('/about', forwardAuthenticated, (req, res) => {
+  res.render('about');
+});
+
 router.get('/register', forwardAuthenticated, (req, res) => {
   res.render('register');
 });
