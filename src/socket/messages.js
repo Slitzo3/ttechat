@@ -2,7 +2,7 @@ const client = require("socket.io").listen(process.env.PORTSOCKET).sockets;
 
 module.exports = function start(db) {
   // Connect to Socket.io
-  client.on("connection", function (socket) {
+  client.on("connection", (socket) => {
     let chat = db.collection("chats");
 
     // Create function to send status
@@ -11,7 +11,7 @@ module.exports = function start(db) {
     };
 
     // Get chats from mongo collection
-    chat.find().limit(20).sort({ timestamp: -1 }).toArray(function (err, res) {
+    chat.find().limit(20).sort({ timestamp: -1 }).toArray((err, res) => {
       if (err) {
         throw err;
       }
@@ -21,7 +21,7 @@ module.exports = function start(db) {
     });
 
     // Handle input events
-    socket.on("input", function (data) {
+    socket.on("input", (data) => {
       let name = data.name;
       let message = data.message;
       let timestamp = new Date();
