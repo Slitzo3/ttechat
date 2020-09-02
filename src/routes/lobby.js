@@ -20,8 +20,11 @@ router.get("/servers", ensureAuthenticated, async (req, res) => {
   );
 });
 
-router.get("/servers/:id", ensureAuthenticated, (req, res) => {
-  res.render("./lobby/servers", { users: req.user, server: {} });
+router.get("/servers/:id", ensureAuthenticated, async (req, res) => {
+  res.render(
+    "./lobby/servers",
+    { users: req.user, server: await Server.findOne({ _id: req.params.id }) },
+  );
 });
 
 router.get("/create", ensureAuthenticated, (req, res) => {
