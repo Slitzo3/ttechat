@@ -1,5 +1,8 @@
 # TTEchat
 
+# Introduction
+TTEchat will be better than discord.
+
 # TODO
 
 - [x] Create something
