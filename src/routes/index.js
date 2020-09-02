@@ -48,7 +48,7 @@ router.post("/register", forwardAuthenticated, (req, res) => {
     });
   } else {
     User.findOne({ email: email }).then((user) => {
-      if (typeof user === null) {
+      if (user != null) {
         if (user.username === username) {
           errors.push({ msg: "Username already exists" });
           res.render("register", {
@@ -58,9 +58,7 @@ router.post("/register", forwardAuthenticated, (req, res) => {
             password,
             password2,
           });
-        }
-
-        if (user) {
+        } else if (user) {
           errors.push({ msg: "Email already exists" });
           res.render("register", {
             errors,
@@ -68,29 +66,6 @@ router.post("/register", forwardAuthenticated, (req, res) => {
             email,
             password,
             password2,
-          });
-        } else {
-          const newUser = new User({
-            username,
-            email,
-            password,
-          });
-
-          bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(newUser.password, salt, (err, hash) => {
-              if (err) throw err;
-              newUser.password = hash;
-              newUser
-                .save()
-                .then((user) => {
-                  req.flash(
-                    "success_msg",
-                    "You are now registered and can log in",
-                  );
-                  res.redirect("/login");
-                })
-                .catch((err) => console.log(err));
-            });
           });
         }
       } else {
