@@ -55,11 +55,6 @@ if (socket !== undefined) {
   socket.on("status", function (data) {
     // get message status
     setStatus((typeof data === "object") ? data.message : data);
-
-    // If status is clear, clear text
-    if (data.clear) {
-      textarea.value = "";
-    }
   });
 
   // Handle Input
