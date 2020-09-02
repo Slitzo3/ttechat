@@ -23,7 +23,11 @@ router.get("/servers", ensureAuthenticated, async (req, res) => {
 router.get("/servers/:id", ensureAuthenticated, async (req, res) => {
   res.render(
     "./lobby/servers",
-    { users: req.user, server: await Server.findOne({ _id: req.params.id }) },
+    {
+      users: req.user,
+      server: await Server.findOne({ _id: req.params.id }),
+      id: req.params.id,
+    },
   );
 });
 

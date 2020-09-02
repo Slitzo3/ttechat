@@ -7,7 +7,6 @@ var status = element("status");
 var messages = element("messages");
 var textarea = element("textarea");
 var username = element("username").innerText;
-var clearBtn = element("clear");
 
 // Set default status
 let statusDefault = status.textContent;
@@ -28,6 +27,10 @@ var socket = io.connect(`http://127.0.0.1:` + 4000);
 
 // Check for connection
 if (socket !== undefined) {
+
+
+  socket.emit("new-user", roomName, roomID);
+
   // Handle Output
   socket.on("output", function (data) {
     //console.log(data);
