@@ -3,7 +3,7 @@
 # TODO
 
 - [x] Create something
-- [ ] MongoDB
+- [X] MongoDB
 - [x] Login/Register system
 - [ ] Create rooms/chat-rooms
 - [ ] Store chat's and display them on the rooms
