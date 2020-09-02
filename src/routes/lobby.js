@@ -34,9 +34,9 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
   });
   try {
     let serverID = await newServer.save();
-    res.redirect(`/blogs/${blogID.slug}`);
+    res.redirect(`/servers/${serverID._id}`);
   } catch (err) {
-    res.render("blogs/new", { blog: newBlog });
+    res.render("/create");
   }
 });
 
