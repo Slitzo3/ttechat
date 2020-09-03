@@ -8,9 +8,13 @@ TTEchat will be better than discord.
 - [x] Create something
 - [X] MongoDB
 - [x] Login/Register system
-- [ ] Create rooms/chat-rooms
+- [X] Create rooms/chat-rooms
 - [ ] Store chat's and display them on the rooms
 - [ ] Add friends
 - [ ] Private rooms for friends and user
 - [ ] Voice Chat
 - [ ] Video Chat
+- [ ] Add Activations Email
+- [ ] Add password reset
+- [ ] Profile picture
+- [ ] Send images in chat

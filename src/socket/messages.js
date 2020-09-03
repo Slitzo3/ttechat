@@ -3,12 +3,25 @@ const client = require("socket.io").listen(process.env.PORTSOCKET).sockets;
 module.exports = function start(db) {
   // Connect to Socket.io
   client.on("connection", (socket) => {
-    let chat = db.collection("chats");
+    let chat = db.collection("chats").catch(console.error);
 
     // Create function to send status
     sendStatus = (s) => {
       socket.emit("status", s);
     };
+
+    socket.on("new-user", (room, name) => {
+      socket.join(room);
+      rooms[room].users[socket.id] = name;
+      socket.to(room).broadcast.emit("user-connected", name);
+    });
+
+    socket.on("send-chat-message", (room, message) => {
+      socket.to(room).broadcast.emit(
+        "output",
+        { message: message },
+      );
+    });
 
     // Get chats from mongo collection
     chat.find().limit(20).sort({ timestamp: -1 }).toArray((err, res) => {

@@ -10,6 +10,10 @@ const flash = require("connect-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
 
+const routine = require('./functions/dailyRoutine');
+
+
+
 // Passport Config
 require("./config/passport")(passport);
 
@@ -20,6 +24,10 @@ mongoose.connect(process.env.MONGODB_NAV, {
 });
 
 const db = mongoose.connection;
+
+setInterval(() => {
+  routine.NotActivatedRemover();
+}, 86400000);
 
 //Sockets
 require("./socket/messages")(db);

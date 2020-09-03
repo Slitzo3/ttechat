@@ -1,6 +1,6 @@
 <div id="room-container">
   <% server.forEach(room => { %>
   <div><%= room.name %></div>
-  <a href="/<%= /servers/room._id %>">Join</a>
+  <a href="servers/<%= room._id %>">Join</a>
   <% }) %>
 </div>
