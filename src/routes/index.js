@@ -25,6 +25,8 @@ router.get("/login", forwardAuthenticated, (req, res) => {
 router.post("/register", forwardAuthenticated, (req, res) => {
   const { username, email, password, password2 } = req.body;
   let errors = [];
+  const regex = 	
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
 
   if (!username || !email || !password || !password2) {
     errors.push({ msg: "Please enter all fields" });
@@ -36,6 +38,10 @@ router.post("/register", forwardAuthenticated, (req, res) => {
 
   if (password.length < 6) {
     errors.push({ msg: "Password must be at least 6 characters" });
+  }
+  
+  if (!regex.test(email)) {
+    errors.push({msg: 'Invalid Email'})
   }
 
   if (errors.length > 0) {
