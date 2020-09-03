@@ -16,3 +16,5 @@ TTEchat will be better than discord.
 - [ ] Video Chat
 - [ ] Add Activations Email
 - [ ] Add password reset
+- [ ] Profile picture
+- [ ] Send images in chat
