@@ -21,6 +21,10 @@ router.get("/login", forwardAuthenticated, (req, res) => {
   res.render("login");
 });
 
+router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
+  res.render("forgotpassword");
+});
+
 // Register
 router.post("/register", forwardAuthenticated, (req, res) => {
   const { username, email, password, password2 } = req.body;
@@ -113,6 +117,13 @@ router.post("/login", forwardAuthenticated, (req, res, next) => {
 
 // Logout
 router.get("/logout", forwardAuthenticated, (req, res) => {
+  req.logout();
+  req.flash("success_msg", "You are logged out");
+  res.redirect("/login");
+});
+
+//Forgot Password
+router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
   req.logout();
   req.flash("success_msg", "You are logged out");
   res.redirect("/login");
