@@ -17,6 +17,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'member',
   },
+  activation: {
+    type: Boolean,
+    default: false
+  },
   joined: {
     type: Date,
     default: Date.now,
