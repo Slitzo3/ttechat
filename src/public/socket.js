@@ -1,75 +1,69 @@
-let element = function (id) {
-  return document.getElementById(id);
-};
+var socket = io();
+var messages = document.getElementById('messages');
 
-// Get Elements
-var status = element("status");
-var messages = element("messages");
-var textarea = element("textarea");
-var username = element("username").innerText;
+(function () {
+  $('form').submit(function (e) {
+    let li = document.createElement('li');
+    e.preventDefault(); // prevents page reloading
+    socket.emit('chat message', $('#message').val());
 
-// Set default status
-let statusDefault = status.textContent;
+    messages.appendChild(li).append($('#message').val());
+    let span = document.createElement('span');
+    messages.appendChild(span).append('by ' + 'Anonymous' + ': ' + 'just now');
 
-let setStatus = function (s) {
-  // Set status
-  status.textContent = s;
+    $('#message').val('');
 
-  if (s !== statusDefault) {
-    setTimeout(function () {
-      setStatus(statusDefault);
-    }, 4000);
-  }
-};
-
-// Connect to socket.io
-var socket = io.connect(`http://127.0.0.1:` + 4000);
-
-// Check for connection
-if (socket !== undefined) {
-
-
-  socket.emit("new-user", roomName, roomID);
-
-  // Handle Output
-  socket.on("output", function (data) {
-    //console.log(data);
-    if (data.length) {
-      for (var x = 0; x < data.length; x++) {
-        // Build out message div
-        var message = document.createElement("div");
-        //Give the div a class
-        message.setAttribute("class", "chat-message");
-        //Some style
-        message.setAttribute("style", "margin-bottom: 20px;");
-        //Send out the message aka print it out
-        message.textContent = data[x].timestamp.toLocaleString() + " | " +
-          data[x].name + ": " +
-          data[x].message;
-        //Append it
-        messages.appendChild(message);
-        //
-        messages.insertBefore(message, messages.firstChild);
-      }
-    }
+    return false;
   });
 
-  // Get Status From Server
-  socket.on("status", function (data) {
-    // get message status
-    setStatus((typeof data === "object") ? data.message : data);
+  socket.on('received', (data) => {
+    let li = document.createElement('li');
+    let span = document.createElement('span');
+    var messages = document.getElementById('messages');
+    messages.appendChild(li).append(data.message);
+    messages.appendChild(span).append('by ' + 'anonymous' + ': ' + 'just now');
+    console.log('Hello bingo!');
   });
+})();
 
-  // Handle Input
-  textarea.addEventListener("keydown", function (event) {
-    if (event.which === 13 && event.shiftKey == false) {
-      // Emit to server input
-      socket.emit("input", {
-        name: username,
-        message: textarea.value,
+// fetching initial chat messages from the database
+(function () {
+  fetch('/chats')
+    .then((data) => {
+      return data.json();
+    })
+    .then((json) => {
+      json.map((data) => {
+        let li = document.createElement('li');
+        let span = document.createElement('span');
+        messages.appendChild(li).append(data.message);
+        messages
+          .appendChild(span)
+          .append('by ' + data.sender + ': ' + formatTimeAgo(data.createdAt));
       });
+    });
+})();
 
-      event.preventDefault();
-    }
-  });
-}
+//is typing...
+
+let messageInput = document.getElementById('message');
+let typing = document.getElementById('typing');
+
+//isTyping event
+messageInput.addEventListener('keypress', () => {
+  socket.emit('typing', { user: 'Someone', message: 'is typing...' });
+});
+
+socket.on('notifyTyping', (data) => {
+  typing.innerText = data.user + ' ' + data.message;
+  console.log(data.user + data.message);
+});
+
+//stop typing
+messageInput.addEventListener('keyup', () => {
+  socket.emit('stopTyping', '');
+});
+
+socket.on('notifyStopTyping', () => {
+  typing.innerText = '';
+});

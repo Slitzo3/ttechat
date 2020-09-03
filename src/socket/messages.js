@@ -1,63 +1,40 @@
-const client = require("socket.io").listen(process.env.PORTSOCKET).sockets;
+const app = require('express')();
+//require the http module
+const http = require('http').Server(app);
+// require the socket.io module
+const io = require('socket.io');
+//integrating socketio
+socket = io(http);
+
+const Chat = require('../models/Chat');
 
 module.exports = function start(db) {
-  // Connect to Socket.io
-  client.on("connection", (socket) => {
-    let chat = db.collection("chats").catch(console.error);
-
-    // Create function to send status
-    sendStatus = (s) => {
-      socket.emit("status", s);
-    };
-
-    socket.on("new-user", (room, name) => {
-      socket.join(room);
-      rooms[room].users[socket.id] = name;
-      socket.to(room).broadcast.emit("user-connected", name);
+  socket.on('connection', (socket) => {
+    //Someone is typing
+    socket.on('typing', (data) => {
+      socket.broadcast.emit('notifyTyping', {
+        user: data.user,
+        message: data.message,
+      });
     });
 
-    socket.on("send-chat-message", (room, message) => {
-      socket.to(room).broadcast.emit(
-        "output",
-        { message: message },
-      );
+    //when soemone stops typing
+    socket.on('stopTyping', () => {
+      socket.broadcast.emit('notifyStopTyping');
     });
 
-    // Get chats from mongo collection
-    chat.find().limit(20).sort({ timestamp: -1 }).toArray((err, res) => {
-      if (err) {
-        throw err;
-      }
+    socket.on('chat message', function (msg) {
+      console.log('message: ' + msg);
 
-      // Emit the messages
-      socket.emit("output", res);
-    });
+      //broadcast message to everyone in port:5000 except yourself.
+      socket.broadcast.emit('received', { message: msg });
 
-    // Handle input events
-    socket.on("input", (data) => {
-      let name = data.name;
-      let message = data.message;
-      let timestamp = new Date();
+      //save chat to the database
+      db.then((db) => {
+        let chatMessage = new Chat({ message: msg, sender: 'Anonymous' });
 
-      // Check for name and message
-      if (message == "") {
-        // Send error status
-        sendStatus("Please enter a message");
-      } else {
-        // Insert message
-        chat.insertOne(
-          { name: name, message: message, timestamp: timestamp },
-          () => {
-            client.emit("output", [data]);
-
-            // Send status object
-            sendStatus({
-              message: "Message sent",
-              clear: true,
-            });
-          },
-        );
-      }
+        chatMessage.save();
+      });
     });
   });
 };
