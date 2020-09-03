@@ -6,13 +6,13 @@ module.exports = {
             for(let i = 0; i < user.length; ++i) {
                 const userJoinDate = user[i].joined;
                 const dateNow = new Date
-                console.log(userJoinDate.toLocaleDateString())
-                console.log(dateNow.toLocaleDateString())
-                if(true) {
-    
+                
+                if(userJoinDate.getUTCDate()+7 <= dateNow.getUTCDate()+1) {
+                    user.delete()
+                } else {
+                    console.log(`User: ${user[i].username} wont get oof'ed`)
                 }
             }
-
         })
     }
 }
