@@ -25,6 +25,7 @@ mongoose.connect(process.env.MONGODB_NAV, {
 
 const db = mongoose.connection;
 
+// Checks every day for something..
 setInterval(() => {
   routine.NotActivatedRemover();
 }, 86400000);
