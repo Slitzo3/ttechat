@@ -25,7 +25,9 @@ mongoose.connect(process.env.MONGODB_NAV, {
 
 const db = mongoose.connection;
 
-routine.NotActivatedRemover();
+setInterval(() => {
+  routine.NotActivatedRemover();
+}, 86400000);
 
 //Sockets
 require("./socket/messages")(db);
