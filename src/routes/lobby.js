@@ -20,8 +20,15 @@ router.get("/servers", ensureAuthenticated, async (req, res) => {
   );
 });
 
-router.get("/servers/:id", ensureAuthenticated, (req, res) => {
-  res.render("./lobby/servers", { users: req.user, server: {} });
+router.get("/servers/:id", ensureAuthenticated, async (req, res) => {
+  res.render(
+    "./lobby/servers",
+    {
+      users: req.user,
+      server: await Server.findOne({ _id: req.params.id }),
+      id: req.params.id,
+    },
+  );
 });
 
 router.get("/create", ensureAuthenticated, (req, res) => {
@@ -34,9 +41,9 @@ router.post("/create", ensureAuthenticated, async (req, res) => {
   });
   try {
     let serverID = await newServer.save();
-    res.redirect(`/blogs/${blogID.slug}`);
+    res.redirect(`/servers/${serverID._id}`);
   } catch (err) {
-    res.render("blogs/new", { blog: newBlog });
+    res.render("/create");
   }
 });
 
