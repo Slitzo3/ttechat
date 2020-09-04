@@ -21,8 +21,9 @@ router.get("/login", forwardAuthenticated, (req, res) => {
   res.render("login");
 });
 
+//Forgot Password
 router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
-  res.render("forgotpassword");
+  res.render("forgotPassword");
 });
 
 // Register
@@ -115,15 +116,27 @@ router.post("/login", forwardAuthenticated, (req, res, next) => {
   })(req, res, next);
 });
 
-// Logout
-router.get("/logout", (req, res) => {
-  req.logout();
-  req.flash("success_msg", "You are logged out");
-  res.redirect("/login");
+//Restore password
+router.post("/restore", forwardAuthenticated, (req, res) => {
+  const email = req.body.email;
+  let errors = [];
+  User.findOne({ email: email }).then((user) => {
+    if (user != null) {
+      console.log("lol email: " + email);
+    } else {
+      errors.push({
+        msg: "No email found.",
+      });
+      res.render("forgotPassword", {
+        errors,
+        email,
+      });
+    }
+  });
 });
 
-//Forgot Password
-router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
+// Logout
+router.get("/logout", (req, res) => {
   req.logout();
   req.flash("success_msg", "You are logged out");
   res.redirect("/login");
