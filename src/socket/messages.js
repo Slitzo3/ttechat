@@ -1,40 +1,50 @@
-const app = require('express')();
-//require the http module
-const http = require('http').Server(app);
-// require the socket.io module
-const io = require('socket.io');
-//integrating socketio
-socket = io(http);
-
-const Chat = require('../models/Chat');
+const client = require("socket.io").listen(process.env.PORTSOCKET).sockets;
 
 module.exports = function start(db) {
-  socket.on('connection', (socket) => {
-    //Someone is typing
-    socket.on('typing', (data) => {
-      socket.broadcast.emit('notifyTyping', {
-        user: data.user,
-        message: data.message,
-      });
+  // Connect to Socket.io
+  client.on("connection", function (socket) {
+    let chat = db.collection("chats");
+
+    // Create function to send status
+    sendStatus = (s) => {
+      socket.emit("status", s);
+    };
+
+    // Get chats from mongo collection
+    chat.find().limit(20).sort({ timestamp: -1 }).toArray(function (err, res) {
+      if (err) {
+        throw err;
+      }
+
+      // Emit the messages
+      socket.emit("output", res);
     });
 
-    //when soemone stops typing
-    socket.on('stopTyping', () => {
-      socket.broadcast.emit('notifyStopTyping');
-    });
+    // Handle input events
+    socket.on("input", function (data) {
+      let name = data.name;
+      let message = data.message;
+      let timestamp = new Date();
 
-    socket.on('chat message', function (msg) {
-      console.log('message: ' + msg);
+      // Check for name and message
+      if (message == "") {
+        // Send error status
+        sendStatus("Please enter a message");
+      } else {
+        // Insert message
+        chat.insertOne(
+          { name: name, message: message, timestamp: timestamp },
+          () => {
+            client.emit("output", [data]);
 
-      //broadcast message to everyone in port:5000 except yourself.
-      socket.broadcast.emit('received', { message: msg });
-
-      //save chat to the database
-      db.then((db) => {
-        let chatMessage = new Chat({ message: msg, sender: 'Anonymous' });
-
-        chatMessage.save();
-      });
+            // Send status object
+            sendStatus({
+              message: "Message sent",
+              clear: true,
+            });
+          },
+        );
+      }
     });
   });
 };
