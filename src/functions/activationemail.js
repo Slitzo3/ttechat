@@ -9,9 +9,9 @@ async function main() {
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
-    host: 'sweplox.se',
-    port: 465,
-    secure: true, // true for 465, false for other ports
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SSL, // true for 465, false for other ports
     auth: {
       user: process.env.EMAIL, // generated ethereal user
       pass: process.env.EMAIL_PASSWORD, // generated ethereal password
@@ -30,13 +30,6 @@ async function main() {
     text: `Activation email for ${account}`, // plain text body
     html: `Activation email for ${account}, https://ttechat.sweplox.se/activation/${conf}`, // html body
   });
-
-  console.log('Message sent: %s', info.messageId);
-  // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-
-  // Preview only available when sending through an Ethereal account
-  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-  // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 
 module.exports = main;
