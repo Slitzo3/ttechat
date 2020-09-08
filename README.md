@@ -32,3 +32,6 @@ EMAIL=
 EMAIL_PASSWORD=
 EMAIL_SENDER=
 ```
+
+## Running
+Depending on the root you are in. You want to navigate to /src/ and use this command: `node server` *depending on your root ofc*
