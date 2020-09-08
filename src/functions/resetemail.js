@@ -1,9 +1,7 @@
 const nodemailer = require("nodemailer");
-require("dotenv").config();
+const crypto = require("crypto");
 
-// async..await is not allowed in global scope, must use a wrapper
 module.exports = async function resetPasswordEmail(email, account, callback) {
-  // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -13,9 +11,7 @@ module.exports = async function resetPasswordEmail(email, account, callback) {
       pass: process.env.EMAIL_PASSWORD, // generated ethereal password
     },
   });
-  var crypto = require("crypto");
-  var conf = crypto.randomBytes(10).toString("hex");
-  // send mail with defined transport object
+  const conf = crypto.randomBytes(10).toString("hex");
   try {
     await transporter.sendMail({
       from: '"TTE Chat" <ttechat@sweplox.se>', // sender address
