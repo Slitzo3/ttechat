@@ -32,6 +32,70 @@ router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
   res.render("forgotPassword");
 });
 
+router.get("/restore/:forgotpasswordkey", forwardAuthenticated, (req, res) => {
+  const key = req.params.forgotpasswordkey;
+  let errors = [];
+  Activation.findOne({ conf: key }).then((dataKey) => {
+    if (dataKey != null) {
+      res.render("restore", {
+        key: key,
+      });
+    } else {
+      errors.push({
+        msg: "Whoops! Something went wrong..",
+      });
+      res.redirect("/forgotpassword", {
+        errors,
+      });
+    }
+  });
+});
+
+router.post("/restore/:key", forwardAuthenticated, (req, res) => {
+  const key = req.params.key;
+  const { password, password2 } = req.body;
+  let errors = [];
+
+  if (password != password2) {
+    errors.push({ msg: "Passwords do not match" });
+  }
+
+  if (errors.length > 0) {
+    res.render("restore", {
+      errors,
+      password,
+      password2,
+    });
+  } else {
+    Activation.findOne({ conf: key }).then((dataKey) => {
+      if (dataKey != null) {
+        User.findOne({ email: dataKey.email }).then((user) => {
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(password, salt, (err, hash) => {
+              if (err) throw err;
+              user.password = hash;
+              user
+                .save()
+                .then((user) => {
+                  req.flash("success_msg", "Password succesfully changed.");
+                  res.redirect("/login");
+                })
+                .catch((err) => console.log(err));
+            });
+          });
+        });
+      } else {
+        errors.push({
+          msg: "Invalid key",
+        });
+        res.render("restore", {
+          errors,
+        });
+      }
+    });
+  }
+});
+
 // Register
 router.post("/register", forwardAuthenticated, (req, res) => {
   const { username, email, password, password2 } = req.body;
