@@ -11,9 +11,6 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 const routine = require('./functions/dailyRoutine');
 
-//remove this later albin lol
-//require('./functions/activationemail')();
-
 // Passport Config
 require('./config/passport')(passport);
 
