@@ -6,18 +6,22 @@ const User = require("../models/User");
 const { forwardAuthenticated, ensureAuthenticated } = require("../config/auth");
 const resetPassword = require("../functions/resetemail");
 
+//Where it all started
 router.get("/", forwardAuthenticated, (req, res) => {
   res.render("getstarted");
 });
 
+//About route
 router.get("/about", forwardAuthenticated, (req, res) => {
   res.render("about");
 });
 
+//Register route
 router.get("/register", forwardAuthenticated, (req, res) => {
   res.render("register");
 });
 
+//Login route
 router.get("/login", forwardAuthenticated, (req, res) => {
   res.render("login");
 });
