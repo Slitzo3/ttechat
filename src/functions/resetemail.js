@@ -1,7 +1,14 @@
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
 
-module.exports = async function resetPasswordEmail(email, account, callback) {
+module.exports = {
+  /**
+   * 
+   * @param email The email of the user.
+   * @param account The account name for the user.
+   * @param callback Returns the conf
+   */
+ resetPasswordEmail: async function(email, account, callback) {
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -26,4 +33,5 @@ module.exports = async function resetPasswordEmail(email, account, callback) {
   callback({
     conf: conf,
   });
-};
+},
+}
