@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const User = require("../models/User");
 const { forwardAuthenticated, ensureAuthenticated } = require("../config/auth");
+const resetPassword = require("../functions/resetemail");
 
 router.get("/", forwardAuthenticated, (req, res) => {
   res.render("getstarted");
@@ -30,8 +31,7 @@ router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
 router.post("/register", forwardAuthenticated, (req, res) => {
   const { username, email, password, password2 } = req.body;
   let errors = [];
-  const regex =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   if (!username || !email || !password || !password2) {
     errors.push({ msg: "Please enter all fields" });
@@ -93,10 +93,7 @@ router.post("/register", forwardAuthenticated, (req, res) => {
             newUser
               .save()
               .then((user) => {
-                req.flash(
-                  "success_msg",
-                  "You are now registered and can log in",
-                );
+                req.flash("success_msg", "You are now registered and can log in");
                 res.redirect("/login");
               })
               .catch((err) => console.log(err));
@@ -122,7 +119,10 @@ router.post("/restore", forwardAuthenticated, (req, res) => {
   let errors = [];
   User.findOne({ email: email }).then((user) => {
     if (user != null) {
-      console.log("lol email: " + email);
+      const username = user.username;
+      resetPassword(email, username, (conf) => {
+        console.log(conf);
+      });
     } else {
       errors.push({
         msg: "No email found.",
