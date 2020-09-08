@@ -7,6 +7,7 @@ var status = element("status");
 var messages = element("messages");
 var textarea = element("textarea");
 var username = element("username").innerText;
+var clearBtn = element("clear");
 
 // Set default status
 let statusDefault = status.textContent;
@@ -27,15 +28,12 @@ var socket = io.connect(`http://127.0.0.1:` + 4000);
 
 // Check for connection
 if (socket !== undefined) {
-
-
-  socket.emit("new-user", roomName, roomID);
-
   // Handle Output
   socket.on("output", function (data) {
     //console.log(data);
     if (data.length) {
       for (var x = 0; x < data.length; x++) {
+        messages.scrollTop = messages.scrollHeight;
         // Build out message div
         var message = document.createElement("div");
         //Give the div a class
@@ -43,7 +41,8 @@ if (socket !== undefined) {
         //Some style
         message.setAttribute("style", "margin-bottom: 20px;");
         //Send out the message aka print it out
-        message.textContent = data[x].timestamp.toLocaleString() + " | " +
+        message.textContent = data[x].timestamp.toLocaleDateString +
+          " | " +
           data[x].name + ": " +
           data[x].message;
         //Append it
@@ -58,6 +57,11 @@ if (socket !== undefined) {
   socket.on("status", function (data) {
     // get message status
     setStatus((typeof data === "object") ? data.message : data);
+
+    // If status is clear, clear text
+    if (data.clear) {
+      textarea.value = "";
+    }
   });
 
   // Handle Input
@@ -67,6 +71,7 @@ if (socket !== undefined) {
       socket.emit("input", {
         name: username,
         message: textarea.value,
+        timestamp: new Date(),
       });
 
       event.preventDefault();

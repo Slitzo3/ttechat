@@ -9,42 +9,11 @@ router.get("/", ensureAuthenticated, (req, res) => {
   res.render("./lobby/lobby", { users: req.user });
 });
 
-router.get("/friends", ensureAuthenticated, (req, res) => {
-  res.render("./lobby/friends", { users: req.user });
-});
-
 router.get("/servers", ensureAuthenticated, async (req, res) => {
   res.render(
-    "./lobby/findServers",
+    "./lobby/servers",
     { users: req.user, server: await Server.find() },
   );
-});
-
-router.get("/servers/:id", ensureAuthenticated, async (req, res) => {
-  res.render(
-    "./lobby/servers",
-    {
-      users: req.user,
-      server: await Server.findOne({ _id: req.params.id }),
-      id: req.params.id,
-    },
-  );
-});
-
-router.get("/create", ensureAuthenticated, (req, res) => {
-  res.render("./lobby/create", { users: req.user });
-});
-
-router.post("/create", ensureAuthenticated, async (req, res) => {
-  let newServer = new Server({
-    name: req.body.name,
-  });
-  try {
-    let serverID = await newServer.save();
-    res.redirect(`/servers/${serverID._id}`);
-  } catch (err) {
-    res.render("/create");
-  }
 });
 
 module.exports = router;
