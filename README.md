@@ -18,3 +18,17 @@ TTEchat will be better than discord.
 - [ ] Add password reset
 - [ ] Profile picture
 - [ ] Send images in chat
+
+## Configure
+```js
+SESSION_SECRET=
+PORT=3000
+PORTSOCKET=4000
+MONGODB_NAV=
+SMTP_HOST=
+SMTP_PORT=
+SSL=True
+EMAIL=
+EMAIL_PASSWORD=
+EMAIL_SENDER=
+```
