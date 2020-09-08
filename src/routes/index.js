@@ -3,8 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const User = require("../models/User");
+const Activation = require("../models/Activator");
 const { forwardAuthenticated, ensureAuthenticated } = require("../config/auth");
-const resetPassword = require("../functions/resetemail");
+const { resetPasswordEmail } = require("../functions/resetemail");
 
 //Where it all started
 router.get("/", forwardAuthenticated, (req, res) => {
@@ -124,8 +125,44 @@ router.post("/restore", forwardAuthenticated, (req, res) => {
   User.findOne({ email: email }).then((user) => {
     if (user != null) {
       const username = user.username;
-      resetPassword(email, username, (conf) => {
-        console.log(conf);
+      resetPasswordEmail(email, username, (conf) => {
+        Activation.findOne({ email: email }).then((keyData) => {
+          if (keyData != null) {
+            errors.push({
+              success_msg: `Email sent, please check your inbox for the activation link.`,
+            });
+
+            let newKey = new Activation({
+              conf: conf.conf,
+              email: email,
+              type: "reset",
+            });
+
+            newKey.save();
+
+            res.render("forgotPassword", {
+              errors,
+              email,
+            });
+          } else {
+            errors.push({
+              success_msg: `Email sent, please check your inbox for the activation link.`,
+            });
+
+            let newKey = new Activation({
+              conf: conf.conf,
+              email: email,
+              type: "reset",
+            });
+
+            newKey.save();
+
+            res.render("forgotPassword", {
+              errors,
+              email,
+            });
+          }
+        });
       });
     } else {
       errors.push({
