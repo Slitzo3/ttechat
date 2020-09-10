@@ -165,7 +165,7 @@ router.post("/register", forwardAuthenticated, (req, res) => {
               .then((user) => {
                 req.flash(
                   "success_msg",
-                  "You are now registered and can log in",
+                  "You are now registered. Please also check your inbox to activate your account.",
                 );
                 res.redirect("/login");
               })
