@@ -42,7 +42,7 @@ router.get("/restore/:forgotpasswordkey", forwardAuthenticated, (req, res) => {
       });
     } else {
       errors.push({
-        msg: "Whoops! Something went wrong..",
+        msg: "Whoops! Something went wrong.. maybe the activation key expired?",
       });
       res.redirect("/forgotpassword", {
         errors,
@@ -86,7 +86,7 @@ router.post("/restore/:key", forwardAuthenticated, (req, res) => {
         });
       } else {
         errors.push({
-          msg: "Invalid key",
+          msg: "Invalid key & Key expired..",
         });
         res.render("restore", {
           errors,
@@ -100,7 +100,8 @@ router.post("/restore/:key", forwardAuthenticated, (req, res) => {
 router.post("/register", forwardAuthenticated, (req, res) => {
   const { username, email, password, password2 } = req.body;
   let errors = [];
-  const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const regex =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   if (!username || !email || !password || !password2) {
     errors.push({ msg: "Please enter all fields" });
@@ -162,7 +163,10 @@ router.post("/register", forwardAuthenticated, (req, res) => {
             newUser
               .save()
               .then((user) => {
-                req.flash("success_msg", "You are now registered and can log in");
+                req.flash(
+                  "success_msg",
+                  "You are now registered and can log in",
+                );
                 res.redirect("/login");
               })
               .catch((err) => console.log(err));
@@ -193,7 +197,8 @@ router.post("/restore", forwardAuthenticated, (req, res) => {
         Activation.findOne({ email: email }).then((keyData) => {
           if (keyData != null) {
             errors.push({
-              success_msg: `Email sent, please check your inbox for the activation link.`,
+              success_msg:
+                `Email sent, please check your inbox for the activation link.`,
             });
 
             let newKey = new Activation({
@@ -210,7 +215,8 @@ router.post("/restore", forwardAuthenticated, (req, res) => {
             });
           } else {
             errors.push({
-              success_msg: `Email sent, please check your inbox for the activation link.`,
+              success_msg:
+                `Email sent, please check your inbox for the activation link.`,
             });
 
             let newKey = new Activation({
