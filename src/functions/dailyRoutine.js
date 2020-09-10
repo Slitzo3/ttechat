@@ -1,7 +1,8 @@
 const User = require("../models/User");
+const Activation = require("../models/Activator");
 
 module.exports = {
-  NotActivatedRemover: () => {
+  NotActivatedRemover: (ms) => {
     User.find({ activation: false }).then((user) => {
       for (let i = 0; i < user.length; ++i) {
         const userJoinDate = user[i].joined;
@@ -9,8 +10,19 @@ module.exports = {
 
         if (userJoinDate.getUTCDate() + 7 <= dateNow.getUTCDate() + 1) {
           user.delete();
-        } else {
-          console.log(`User: ${user[i].username} wont get oof'ed`);
+        }
+      }
+    });
+  },
+  checkActivationsReset: (ms) => {
+    const dateNow = new Date();
+    console.log(dateNow.getUTCHours() + 2);
+    Activation.find({ type: "reset" }).then((data) => {
+      for (let i = 0; i < data.length; ++i) {
+        const activationCreated = data[i].created;
+
+        if (dateNow.getUTCDate() + 1 !== activationCreated.getUTCDate()) {
+        } else if (dateNow.getUTCMinutes()) {
         }
       }
     });
