@@ -9,9 +9,9 @@ const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
-const { NotActivatedRemover, checkActivationsReset } = require("./functions/dailyRoutine");
-
-checkActivationsReset(10);
+const { NotActivatedRemover, checkActivationsReset } = require(
+  "./functions/dailyRoutine",
+);
 
 // Passport Config
 require("./config/passport")(passport);
@@ -25,9 +25,8 @@ mongoose.connect(process.env.MONGODB_NAV, {
 const db = mongoose.connection;
 
 // Checks every day for something..
-setInterval(() => {
-  NotActivatedRemover(10);
-}, 86400000);
+checkActivationsReset(900000);
+NotActivatedRemover(86400000);
 
 //Sockets
 require("./socket/messages")(db);
@@ -49,7 +48,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
-  })
+  }),
 );
 
 // Passport middleware
