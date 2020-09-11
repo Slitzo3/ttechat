@@ -3,8 +3,9 @@ const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
 const User = require("../models/User");
+const Activation = require("../models/Activator");
 const { forwardAuthenticated, ensureAuthenticated } = require("../config/auth");
-const resetPassword = require("../functions/resetemail");
+const { resetPasswordEmail } = require("../functions/resetemail");
 
 //Where it all started
 router.get("/", forwardAuthenticated, (req, res) => {
@@ -31,11 +32,76 @@ router.get("/forgotpassword", forwardAuthenticated, (req, res) => {
   res.render("forgotPassword");
 });
 
+router.get("/restore/:forgotpasswordkey", forwardAuthenticated, (req, res) => {
+  const key = req.params.forgotpasswordkey;
+  let errors = [];
+  Activation.findOne({ conf: key }).then((dataKey) => {
+    if (dataKey != null) {
+      res.render("restore", {
+        key: key,
+      });
+    } else {
+      errors.push({
+        msg: "Whoops! Something went wrong.. maybe the activation key expired?",
+      });
+      res.redirect("/forgotpassword", {
+        errors,
+      });
+    }
+  });
+});
+
+router.post("/restore/:key", forwardAuthenticated, (req, res) => {
+  const key = req.params.key;
+  const { password, password2 } = req.body;
+  let errors = [];
+
+  if (password != password2) {
+    errors.push({ msg: "Passwords do not match" });
+  }
+
+  if (errors.length > 0) {
+    res.render("restore", {
+      errors,
+      password,
+      password2,
+    });
+  } else {
+    Activation.findOne({ conf: key }).then((dataKey) => {
+      if (dataKey != null) {
+        User.findOne({ email: dataKey.email }).then((user) => {
+          bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(password, salt, (err, hash) => {
+              if (err) throw err;
+              user.password = hash;
+              user
+                .save()
+                .then((user) => {
+                  req.flash("success_msg", "Password succesfully changed.");
+                  res.redirect("/login");
+                })
+                .catch((err) => console.log(err));
+            });
+          });
+        });
+      } else {
+        errors.push({
+          msg: "Invalid key & Key expired..",
+        });
+        res.render("restore", {
+          errors,
+        });
+      }
+    });
+  }
+});
+
 // Register
 router.post("/register", forwardAuthenticated, (req, res) => {
   const { username, email, password, password2 } = req.body;
   let errors = [];
-  const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  const regex =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   if (!username || !email || !password || !password2) {
     errors.push({ msg: "Please enter all fields" });
@@ -97,7 +163,10 @@ router.post("/register", forwardAuthenticated, (req, res) => {
             newUser
               .save()
               .then((user) => {
-                req.flash("success_msg", "You are now registered and can log in");
+                req.flash(
+                  "success_msg",
+                  "You are now registered. Please also check your inbox to activate your account.",
+                );
                 res.redirect("/login");
               })
               .catch((err) => console.log(err));
@@ -124,8 +193,46 @@ router.post("/restore", forwardAuthenticated, (req, res) => {
   User.findOne({ email: email }).then((user) => {
     if (user != null) {
       const username = user.username;
-      resetPassword(email, username, (conf) => {
-        console.log(conf);
+      resetPasswordEmail(email, username, (conf) => {
+        Activation.findOne({ email: email }).then((keyData) => {
+          if (keyData != null) {
+            errors.push({
+              success_msg:
+                `Email sent, please check your inbox for the activation link.`,
+            });
+
+            let newKey = new Activation({
+              conf: conf.conf,
+              email: email,
+              type: "reset",
+            });
+
+            newKey.save();
+
+            res.render("forgotPassword", {
+              errors,
+              email,
+            });
+          } else {
+            errors.push({
+              success_msg:
+                `Email sent, please check your inbox for the activation link.`,
+            });
+
+            let newKey = new Activation({
+              conf: conf.conf,
+              email: email,
+              type: "reset",
+            });
+
+            newKey.save();
+
+            res.render("forgotPassword", {
+              errors,
+              email,
+            });
+          }
+        });
       });
     } else {
       errors.push({
