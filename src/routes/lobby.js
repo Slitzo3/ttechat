@@ -16,4 +16,11 @@ router.get("/servers", ensureAuthenticated, async (req, res) => {
   );
 });
 
+router.get("/voicechat", ensureAuthenticated, async (req, res) => {
+  res.render(
+    "./lobby/voicehcat",
+    { users: req.user, server: await Server.find() },
+  );
+});
+
 module.exports = router;
