@@ -1,13 +1,7 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
-// async..await is not allowed in global scope, must use a wrapper
-async function main() {
-  // Generate test SMTP service account from ethereal.email
-  // Only needed if you don't have a real mail account for testing
-  let testAccount = await nodemailer.createTestAccount();
-
-  // create reusable transporter object using the default SMTP transport
+module.exports = async function activationEmail(email, account, callback) {
   let transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
@@ -18,10 +12,7 @@ async function main() {
     },
   });
 
-  let account = 'Tooxic';
-  let email = 'albin@sweplox.se';
-  var crypto = require('crypto');
-  var conf = crypto.randomBytes(10).toString('hex');
+  var conf = crypto.randomBytes(10).toString("hex");
   // send mail with defined transport object
   let info = await transporter.sendMail({
     from: '"TTE Chat" <ttechat@sweplox.se>', // sender address
@@ -30,6 +21,7 @@ async function main() {
     text: `Activation email for ${account}`, // plain text body
     html: `Activation email for ${account}, https://ttechat.sweplox.se/activation/${conf}`, // html body
   });
-}
-
-module.exports = main;
+  callback({
+    conf,
+  });
+};
