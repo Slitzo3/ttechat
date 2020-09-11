@@ -2,8 +2,9 @@ const User = require("../models/User");
 const Activation = require("../models/Activator");
 
 function deleteSixten(number) {
+  if (typeof number != Number) return;
   if (number >= 60) {
-    return (number - 60);
+    return number - 60;
   }
   return number;
 }
@@ -22,6 +23,7 @@ module.exports = {
 
           if (userJoinDate.getUTCDate() + 7 <= dateNow.getUTCDate() + 1) {
             user.delete();
+            Activation.deleteOne({ email: user[i].email });
           }
         }
       });
@@ -38,16 +40,13 @@ module.exports = {
           const activationCreated = data[i].created;
           const dateNow = new Date();
           if (
-            (dateNow.getUTCHours() + 2) >=
-              (activationCreated.getUTCHours() + 2) &&
-            (dateNow.getUTCHours() + 2) !==
-              (activationCreated.getUTCHours() + 2)
+            dateNow.getUTCHours() + 2 >= activationCreated.getUTCHours() + 2 &&
+            dateNow.getUTCHours() + 2 !== activationCreated.getUTCHours() + 2
           ) {
             //Delete it
             Activation.deleteOne({ _id: data[i].id });
           } else if (
-            deleteSixten(activationCreated.getMinutes() + 15) >=
-              activationCreated.getUTCMinutes()
+            deleteSixten(activationCreated.getMinutes() + 15) >= activationCreated.getUTCMinutes()
           ) {
             //Delete it.
             Activation.deleteOne({ _id: data[i].id });
