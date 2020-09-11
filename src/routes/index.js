@@ -7,6 +7,8 @@ const User = require("../models/User");
 const Activation = require("../models/Activator");
 const { forwardAuthenticated, ensureAuthenticated } = require("../config/auth");
 const { resetPasswordEmail } = require("../functions/resetemail");
+const activationEmail = require("../functions/activationemail");
+const activationemail = require("../functions/activationemail");
 
 //Where it all started
 router.get("/", forwardAuthenticated, (req, res) => {
@@ -53,7 +55,7 @@ router.get("/restore/:forgotpasswordkey", forwardAuthenticated, (req, res) => {
 });
 
 //To activate the account.
-router.post("/activation/:key", forwardAuthenticated, (req, res) => {
+router.get("/activation/:key", forwardAuthenticated, (req, res) => {
   const key = req.params.key;
   let errors = [];
   Activation.findOne({ conf: key }).then((data) => {
@@ -63,8 +65,9 @@ router.post("/activation/:key", forwardAuthenticated, (req, res) => {
           user.activation = true;
           user.save();
           errors.push({
-            success_msg: "Account is not activated, feel free to login.",
+            success_msg: "Account is now activated, feel free to login.",
           });
+          Activation.deleteOne({ conf: key }).then((m) => console.log("Deleted"));
           res.render("login", {
             errors,
           });
@@ -88,6 +91,7 @@ router.post("/activation/:key", forwardAuthenticated, (req, res) => {
   });
 });
 
+//Restore the password
 router.post("/restore/:key", forwardAuthenticated, (req, res) => {
   const key = req.params.key;
   const { password, password2 } = req.body;
@@ -192,14 +196,6 @@ router.post("/register", forwardAuthenticated, (req, res) => {
           password,
         });
 
-        const conf = crypto.randomBytes(10).toString("hex");
-
-        const NewActivation = new Activation({
-          conf,
-          email,
-          type: "activate",
-        });
-
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newUser.password, salt, (err, hash) => {
             if (err) throw err;
@@ -211,7 +207,15 @@ router.post("/register", forwardAuthenticated, (req, res) => {
                   "success_msg",
                   "You are now registered. Please also check your inbox to activate your account."
                 );
-                NewActivation.save();
+                activationemail(email, username, (conf) => {
+                  let key = conf.conf;
+                  const NewActivation = new Activation({
+                    conf: key,
+                    email,
+                    type: "activate",
+                  });
+                  NewActivation.save();
+                });
                 res.redirect("/login");
               })
               .catch((err) => console.log(err));
