@@ -15,7 +15,7 @@ TTEchat will be better than discord.
 - [ ] ~~Private rooms for friends and user~~ \*No reason to\*\*
 - [ ] Voice Chat
 - [ ] Video Chat
-- [ ] Add Activations Email
+- [X] Add Activations Email
 - [x] Add password reset
 - [ ] Profile picture
 - [ ] Send images in chat
