@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const bcrypt = require("bcryptjs");
 const passport = require("passport");
+const crypto = require("crypto");
 const User = require("../models/User");
 const Activation = require("../models/Activator");
 const { forwardAuthenticated, ensureAuthenticated } = require("../config/auth");
@@ -191,6 +192,14 @@ router.post("/register", forwardAuthenticated, (req, res) => {
           password,
         });
 
+        const conf = crypto.randomBytes(10).toString("hex");
+
+        const NewActivation = new Activation({
+          conf,
+          email,
+          type: "activate",
+        });
+
         bcrypt.genSalt(10, (err, salt) => {
           bcrypt.hash(newUser.password, salt, (err, hash) => {
             if (err) throw err;
@@ -202,6 +211,7 @@ router.post("/register", forwardAuthenticated, (req, res) => {
                   "success_msg",
                   "You are now registered. Please also check your inbox to activate your account."
                 );
+                NewActivation.save();
                 res.redirect("/login");
               })
               .catch((err) => console.log(err));
