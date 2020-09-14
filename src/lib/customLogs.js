@@ -11,6 +11,7 @@ module.exports = class Logger {
     );
     let log = new LogsDB({
       body: body,
+      type: "normal",
     });
     log.save();
   }
@@ -24,6 +25,7 @@ module.exports = class Logger {
     );
     let log = new LogsDB({
       body: body,
+      type: "warn",
     });
     log.save();
   }
@@ -37,6 +39,7 @@ module.exports = class Logger {
     );
     let log = new LogsDB({
       body: body,
+      type: "debug",
     });
     log.save();
   }
