@@ -1,5 +1,6 @@
-const nodemailer = require("nodemailer");
-const crypto = require("crypto");
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const Logger = require('../lib/customLogs');
 
 module.exports = {
   /**
@@ -18,7 +19,7 @@ module.exports = {
         pass: process.env.EMAIL_PASSWORD, // generated ethereal password
       },
     });
-    const conf = crypto.randomBytes(10).toString("hex");
+    const conf = crypto.randomBytes(10).toString('hex');
     try {
       await transporter.sendMail({
         from: '"TTE Chat" <ttechat@sweplox.se>', // sender address
@@ -28,7 +29,7 @@ module.exports = {
         html: `Reset password email for ${account}, https://ttechat.sweplox.se/restore/${conf}`, // html body
       });
     } catch (err) {
-      console.log(err);
+      Logger.warn(err);
     }
     callback({
       conf: conf,
