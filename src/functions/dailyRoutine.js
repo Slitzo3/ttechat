@@ -1,6 +1,6 @@
 const User = require('../models/User');
 const Activation = require('../models/Activator');
-const Logger = require('../lib/logger');
+const Logger = require('../lib/customLogs');
 
 function deleteSixten(number) {
   if (typeof number != Number) return;
