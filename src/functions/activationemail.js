@@ -1,5 +1,5 @@
-const nodemailer = require("nodemailer");
-const crypto = require("crypto");
+const nodemailer = require('nodemailer');
+const crypto = require('crypto');
 
 module.exports = async function activationEmail(email, account, callback) {
   let transporter = nodemailer.createTransport({
@@ -12,9 +12,9 @@ module.exports = async function activationEmail(email, account, callback) {
     },
   });
 
-  var conf = crypto.randomBytes(10).toString("hex");
+  var conf = crypto.randomBytes(10).toString('hex');
   // send mail with defined transport object
-  let info = await transporter.sendMail({
+  await transporter.sendMail({
     from: '"TTE Chat" <ttechat@sweplox.se>', // sender address
     to: `${email}`, // list of receivers
     subject: `Activation email for ${account}`, // Subject line
