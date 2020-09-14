@@ -5,7 +5,7 @@ const { forwardAuthenticated, ensureAuthenticated } = require('../config/auth');
 
 router.get('/edit', ensureAuthenticated, (req, res) => {
   res.render('./user/edit', {
-    user: req.user,
+    users: req.user,
   });
 });
 
@@ -48,7 +48,7 @@ router.post('/edit', ensureAuthenticated, (req, res) => {
 
   res.render('./user/edit', {
     errors,
-    user: req.user,
+    users: req.user,
   });
 });
 
