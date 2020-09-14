@@ -9,11 +9,10 @@ module.exports = class Logger {
         `${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} | ${body}`
       )
     );
-    let log = new LogsDB({
+    new LogsDB({
       body: body,
       type: "normal",
-    });
-    log.save();
+    }).save();
   }
 
   static warn(body) {
@@ -23,11 +22,10 @@ module.exports = class Logger {
         `${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} | ${body}`
       )
     );
-    let log = new LogsDB({
+    new LogsDB({
       body: body,
       type: "warn",
-    });
-    log.save();
+    }).save();
   }
 
   static debug(body) {
@@ -37,10 +35,9 @@ module.exports = class Logger {
         `${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} | ${body}`
       )
     );
-    let log = new LogsDB({
+    new LogsDB({
       body: body,
       type: "debug",
-    });
-    log.save();
+    }).save();
   }
 };
