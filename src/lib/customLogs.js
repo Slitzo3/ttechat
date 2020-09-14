@@ -1,4 +1,6 @@
 const colors = require("colors");
+const LogsDB = require("../models/Logs");
+
 module.exports = class Logger {
   static normal(body) {
     let d = new Date();
@@ -7,6 +9,10 @@ module.exports = class Logger {
         `${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} | ${body}`
       )
     );
+    let log = new LogsDB({
+      body: body,
+    });
+    log.save();
   }
 
   static warn(body) {
@@ -16,6 +22,10 @@ module.exports = class Logger {
         `${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} | ${body}`
       )
     );
+    let log = new LogsDB({
+      body: body,
+    });
+    log.save();
   }
 
   static debug(body) {
@@ -25,5 +35,9 @@ module.exports = class Logger {
         `${d.toLocaleDateString()} ${d.getHours()}:${d.getMinutes()}:${d.getSeconds()} | ${body}`
       )
     );
+    let log = new LogsDB({
+      body: body,
+    });
+    log.save();
   }
 };
