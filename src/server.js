@@ -9,9 +9,8 @@ const passport = require("passport");
 const flash = require("connect-flash");
 const session = require("express-session");
 const methodOverride = require("method-override");
-const { NotActivatedRemover, checkActivationsReset } = require(
-  "./functions/dailyRoutine",
-);
+const Logger = require("./lib/customLogs");
+const { NotActivatedRemover, checkActivationsReset } = require("./functions/dailyRoutine");
 
 // Passport Config
 require("./config/passport")(passport);
@@ -48,7 +47,7 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
-  }),
+  })
 );
 
 // Passport middleware
@@ -71,13 +70,13 @@ app.use("/", require("./routes/index.js"));
 app.use("/lobby", require("./routes/lobby.js"));
 
 //On error [MongoDB]
-db.on("error", (error) => console.log(error));
+db.on("error", (error) => Logger.warn(error));
 //On open [MongoDB]
-db.once("open", () => console.log("Connected to database"));
+db.once("open", () => Logger.normal("Connected to database"));
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+app.listen(PORT, Logger.normal(`Server started on port ${PORT}`));
 
 app.get("*", (req, res) => {
   res.status(404).render("cannotFindPage");
