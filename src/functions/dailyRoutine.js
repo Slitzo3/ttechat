@@ -1,5 +1,6 @@
-const User = require("../models/User");
-const Activation = require("../models/Activator");
+const User = require('../models/User');
+const Activation = require('../models/Activator');
+const Logger = require('../lib/logger');
 
 function deleteSixten(number) {
   if (typeof number != Number) return;
@@ -22,6 +23,7 @@ module.exports = {
           const dateNow = new Date();
 
           if (userJoinDate.getUTCDate() + 7 <= dateNow.getUTCDate() + 1) {
+            Logger.warn(`Deleted ${user.email} for not activating their account.`);
             user.delete();
             Activation.deleteOne({ email: user[i].email });
           }
@@ -35,7 +37,7 @@ module.exports = {
    */
   checkActivationsReset: (ms) => {
     setInterval(() => {
-      Activation.find({ type: "reset" }).then((data) => {
+      Activation.find({ type: 'reset' }).then((data) => {
         for (let i = 0; i < data.length; ++i) {
           const activationCreated = data[i].created;
           const dateNow = new Date();
@@ -44,11 +46,13 @@ module.exports = {
             dateNow.getUTCHours() + 2 !== activationCreated.getUTCHours() + 2
           ) {
             //Delete it
+            Logger.normal(`${data.email}'s reset key has expired.. deleting..`);
             Activation.deleteOne({ _id: data[i].id });
           } else if (
             deleteSixten(activationCreated.getMinutes() + 15) >= activationCreated.getUTCMinutes()
           ) {
             //Delete it.
+            Logger.normal(`${data.email}'s reset key has expired.. deleting..`);
             Activation.deleteOne({ _id: data[i].id });
           } else {
             return;
