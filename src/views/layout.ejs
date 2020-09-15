@@ -37,6 +37,11 @@
           </li>
         </ul>
         <% if(typeof users != 'undefined') { %>
+        <form action="/user/edit">
+          <div class="text-right">
+            <input type="submit" value="Edit Profile" class="btn-success btn-sm" id="logout" />
+          </div>
+        </form>
         <form action="/logout">
           <div class="text-right">
             <input type="submit" value="Logout" class="btn-danger btn-sm" id="logout" />

@@ -1,5 +1,7 @@
 # TTEchat
 
+This is a project for our school. Please give us a A+, we spent a lot of time on this :(
+
 # Introduction
 
 TTEchat will be better than discord.
@@ -15,9 +17,9 @@ TTEchat will be better than discord.
 - [ ] ~~Private rooms for friends and user~~ \*No reason to\*\*
 - [ ] Voice Chat
 - [ ] Video Chat
-- [ ] Add Activations Email
+- [x] Add Activations Email
 - [x] Add password reset
-- [ ] Profile picture
+- [X] Profile picture
 - [ ] Send images in chat
 
 ## Configure
