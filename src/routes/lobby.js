@@ -18,7 +18,14 @@ router.get("/servers", ensureAuthenticated, async (req, res) => {
 
 router.get("/voicechat", ensureAuthenticated, async (req, res) => {
   res.render(
-    "./lobby/voicehcat",
+    "./lobby/voicechat",
+    { users: req.user, server: await Server.find() },
+  );
+});
+
+router.get("/videochat", ensureAuthenticated, async (req, res) => {
+  res.render(
+    "./lobby/videochat",
     { users: req.user, server: await Server.find() },
   );
 });
