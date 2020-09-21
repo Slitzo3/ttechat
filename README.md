@@ -12,7 +12,7 @@ TTEchat will be better than discord.
 - [x] MongoDB
 - [x] Login/Register system
 - [x] Create rooms/chat-rooms
-- [ ] ~~Store chat's and display them on the rooms~~ _won't make because of security_
+- [X] ~~Store chat's and display them on the rooms~~ _won't make because of security_
 - [ ] ~~Add friends~~ _No reason to_
 - [ ] ~~Private rooms for friends and user~~ \*No reason to\*\*
 - [ ] Voice Chat
