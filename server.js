@@ -9,10 +9,8 @@ const passport = require('passport');
 const flash = require('connect-flash');
 const session = require('express-session');
 const methodOverride = require('method-override');
-const routine = require('./functions/dailyRoutine');
-
-//remove this later albin lol
-//require('./functions/activationemail')();
+const Logger = require('./lib/customLogs');
+const { NotActivatedRemover, checkActivationsReset } = require('./functions/dailyRoutine');
 
 // Passport Config
 require('./config/passport')(passport);
@@ -26,9 +24,8 @@ mongoose.connect(process.env.MONGODB_NAV, {
 const db = mongoose.connection;
 
 // Checks every day for something..
-setInterval(() => {
-  routine.NotActivatedRemover();
-}, 86400000);
+checkActivationsReset(900000);
+NotActivatedRemover(86400000);
 
 //Sockets
 require('./socket/messages')(db);
@@ -71,15 +68,16 @@ app.use(function (req, res, next) {
 //Routes
 app.use('/', require('./routes/index.js'));
 app.use('/lobby', require('./routes/lobby.js'));
+app.use('/user', require('./routes/user'));
 
 //On error [MongoDB]
-db.on('error', (error) => console.log(error));
+db.on('error', (error) => Logger.warn(error));
 //On open [MongoDB]
-db.once('open', () => console.log('Connected to database'));
+db.once('open', () => Logger.normal('Connected to database'));
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, console.log(`Server started on port ${PORT}`));
+app.listen(PORT, Logger.normal(`Server started on port ${PORT}`));
 
 app.get('*', (req, res) => {
   res.status(404).render('cannotFindPage');

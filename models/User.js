@@ -13,13 +13,17 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  profilePicture: {
+    type: String,
+    default: '',
+  },
   role: {
     type: String,
     default: 'member',
   },
   activation: {
     type: Boolean,
-    default: false
+    default: false,
   },
   joined: {
     type: Date,

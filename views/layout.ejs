@@ -14,7 +14,6 @@
     <title>TTEchat</title>
   </head>
   <body>
-    <div><%- include('./partials/errorMessages') %></div>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
       <a class="navbar-brand" href="#">TTEchat</a>
       <button
@@ -38,6 +37,11 @@
           </li>
         </ul>
         <% if(typeof users != 'undefined') { %>
+        <form action="/user/edit">
+          <div class="text-right">
+            <input type="submit" value="Edit Profile" class="btn-success btn-sm" id="logout" />
+          </div>
+        </form>
         <form action="/logout">
           <div class="text-right">
             <input type="submit" value="Logout" class="btn-danger btn-sm" id="logout" />
@@ -46,21 +50,27 @@
         <% } %>
       </div>
     </nav>
-    <div class=""><%- body %></div>
+
     <script
+      defer
       src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
       integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
       crossorigin="anonymous"
     ></script>
     <script
+      defer
       src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js"
       integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut"
       crossorigin="anonymous"
     ></script>
     <script
+      defer
       src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
       integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
       crossorigin="anonymous"
     ></script>
+
+    <div><%- include('./partials/errorMessages') %></div>
+    <div class=""><%- body %></div>
   </body>
 </html>
