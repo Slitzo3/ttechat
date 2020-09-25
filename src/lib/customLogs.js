@@ -2,6 +2,11 @@ const colors = require("colors");
 const LogsDB = require("../models/Logs");
 
 module.exports = class Logger {
+  /**
+   *
+   * @param {any} body The body
+   * @description A normal logging
+   */
   static normal(body) {
     let d = new Date();
     console.log(
@@ -14,7 +19,11 @@ module.exports = class Logger {
       type: "normal",
     }).save();
   }
-
+  /**
+   *
+   * @param {any} body The body
+   * @description When there is a error or something serious
+   */
   static warn(body) {
     let d = new Date();
     console.log(
