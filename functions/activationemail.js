@@ -19,7 +19,7 @@ module.exports = async function activationEmail(email, account, callback) {
     to: `${email}`, // list of receivers
     subject: `Activation email for ${account}`, // Subject line
     text: `Activation email for ${account}`, // plain text body
-    html: `Activation email for ${account}, https://ttechat.sweplox.se/activation/${conf}`, // html body
+    html: `Activation email for ${account}, https://ttechat.se/activation/${conf}`, // html body
   });
   callback({
     conf,
