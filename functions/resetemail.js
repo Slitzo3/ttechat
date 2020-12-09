@@ -26,7 +26,7 @@ module.exports = {
         to: `${email}`, // list of receivers
         subject: `Activation email for ${account}`, // Subject line
         text: `Reset password for ${account}`, // plain text body
-        html: `Reset password email for ${account}, https://ttechat.sweplox.se/restore/${conf}`, // html body
+        html: `Reset password email for ${account}, https://ttechat.se/restore/${conf}`, // html body
       });
     } catch (err) {
       Logger.warn(err);
